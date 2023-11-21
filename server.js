@@ -1,6 +1,9 @@
 const express = require('express')
 const { default: mongoose } = require('mongoose')
 const Hotel = require('./models/hotelModels')
+const Car = require('./models/carModels')
+const Boat = require('./models/boatModels')
+const Event = require('./models/eventModels')
 const app = express()
 app.use(express.json())
 app.getMaxListeners('/', (req, res)=>{
@@ -8,6 +11,156 @@ app.getMaxListeners('/', (req, res)=>{
 
 })
 
+
+// GET all events
+app.get("/events", async (req, res) => {
+    try {
+        const events = await Event.find({});
+        res.status(200).json(events);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// CREATE a new event
+app.post("/events", async (req, res) => {
+    try {
+        const newEvent = await Event.create(req.body);
+        res.status(201).json(newEvent);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// GET a single event by ID
+app.get("/events/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const event = await Event.findById(id);
+
+        if (!event) {
+            return res.status(404).json({ message: "Event not found" });
+        }
+
+        res.status(200).json(event);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// UPDATE an event by ID
+app.put("/events/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const updatedEvent = await Event.findByIdAndUpdate(id, req.body, { new: true });
+
+        if (!updatedEvent) {
+            return res.status(404).json({ message: "Event not found" });
+        }
+
+        res.status(200).json(updatedEvent);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// DELETE an event by ID
+app.delete("/events/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const deletedEvent = await Event.findByIdAndDelete(id);
+
+        if (!deletedEvent) {
+            return res.status(404).json({ message: "Event not found" });
+        }
+
+        res.status(200).json({ message: "Event deleted successfully" });
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+});
+      
+
+
+// GET all boats
+app.get("/boats", async (req, res) => {
+    try {
+        const boats = await Boat.find({});
+        res.status(200).json(boats);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// GET a single boat by ID
+app.get("/boats/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const boat = await Boat.findById(id);
+
+        if (!boat) {
+            return res.status(404).json({ message: "Boat not found" });
+        }
+
+        res.status(200).json(boat);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// CREATE a new boat
+app.post("/boats", async (req, res) => {
+    try {
+        const newBoat = await Boat.create(req.body);
+        res.status(201).json(newBoat);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// UPDATE a boat by ID
+app.put("/boats/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const updatedBoat = await Boat.findByIdAndUpdate(id, req.body, { new: true });
+
+        if (!updatedBoat) {
+            return res.status(404).json({ message: "Boat not found" });
+        }
+
+        res.status(200).json(updatedBoat);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// DELETE a boat by ID
+app.delete("/boats/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const deletedBoat = await Boat.findByIdAndDelete(id);
+
+        if (!deletedBoat) {
+            return res.status(404).json({ message: "Boat not found" });
+        }
+
+        res.status(200).json({ message: "Boat deleted successfully" });
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+});
+        
+    
 
 // GET all cars
 app.get("/cars", async (req, res) => {
@@ -48,23 +201,6 @@ app.post("/cars", async (req, res) => {
     }
 });
 
-// UPDATE a car by ID
-app.put("/cars/:id", async (req, res) => {
-    try {
-        const { id } = req.params;
-        const updatedCar = await Car.findByIdAndUpdate(id, req.body, { new: true });
-
-        if (!updatedCar) {
-            return res.status(404).json({ message: "Car not found" });
-        }
-
-        res.status(200).json(updatedCar);
-    } catch (error) {
-        console.log(error.message);
-        res.status(500).json({ message: error.message });
-    }
-});
-
 // DELETE a car by ID
 app.delete("/cars/:id", async (req, res) => {
     try {
@@ -82,13 +218,28 @@ app.delete("/cars/:id", async (req, res) => {
     }
 });
 
-// ...existing code...
+// UPDATE a car by ID
+app.put("/cars/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const updatedCar = await Car.findByIdAndUpdate(id, req.body, { new: true });
 
-app.listen(4000, () => {
-    console.log("Node API app is running on Port 4000");
+        if (!updatedCar) {
+            return res.status(404).json({ message: "Car not found" });
+        }
+
+        res.status(200).json(updatedCar);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
 });
 
 
+// GET all hotels
+app.listen(4000, () => {
+    console.log("Node API app is running on Port 4000");
+});
 
 app.get("/hotel", async(req, res)=>{
     // console.log(req.body)
