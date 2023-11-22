@@ -4,12 +4,164 @@ const Hotel = require('./models/hotelModels')
 const Car = require('./models/carModels')
 const Boat = require('./models/boatModels')
 const Event = require('./models/eventModels')
+const Flight = require('./models/flightModels')
+const Space = require('./models/spaceModels')
 const app = express()
 app.use(express.json())
 app.getMaxListeners('/', (req, res)=>{
     res.send("Hello Node API")
 
 })
+
+// GET all Flight
+
+app.get("/flights", async (req, res) => {
+    try {
+        const flights = await Flight.find({});
+        res.status(200).json(flights);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// GET a single flight by ID
+app.get("/flights/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const flight = await Flight.findById(id);
+
+        if (!flight) {
+            return res.status(404).json({ message: "Flight not found" });
+        }
+
+        res.status(200).json(flight);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// CREATE a new flight
+app.post("/flights", async (req, res) => {
+    try {
+        const newFlight = await Flight.create(req.body);
+        res.status(201).json(newFlight);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+
+// UPDATE a flight by ID
+app.put("/flights/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const updatedFlight = await Flight.findByIdAndUpdate(id, req.body, { new: true });
+
+        if (!updatedFlight) {
+            return res.status(404).json({ message: "Flight not found" });
+        }
+
+        res.status(200).json(updatedFlight);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// DELETE a flight by ID
+
+app.delete("/flights/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const deletedFlight = await Flight.findByIdAndDelete(id);
+
+        if (!deletedFlight) {
+            return res.status(404).json({ message: "Flight not found" });
+        }
+
+        res.status(200).json({ message: "Flight deleted successfully" });
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// GET all spaces
+app.get("/spaces", async (req, res) => {
+    try {
+        const spaces = await Space.find({});
+        res.status(200).json(spaces);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// GET a single space by ID
+app.get("/spaces/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const space = await Space.findById(id);
+
+        if (!space) {
+            return res.status(404).json({ message: "Space not found" });
+        }
+
+        res.status(200).json(space);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// CREATE a new space
+app.post("/spaces", async (req, res) => {
+    try {
+        const newSpace = await Space.create(req.body);
+        res.status(201).json(newSpace);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// UPDATE a space by ID
+app.put("/spaces/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const updatedSpace = await Space.findByIdAndUpdate(id, req.body, { new: true });
+
+        if (!updatedSpace) {
+            return res.status(404).json({ message: "Space not found" });
+        }
+
+        res.status(200).json(updatedSpace);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// DELETE a space by ID
+app.delete("/spaces/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const deletedSpace = await Space.findByIdAndDelete(id);
+
+        if (!deletedSpace) {
+            return res.status(404).json({ message: "Space not found" });
+        }
+
+        res.status(200).json({ message: "Space deleted successfully" });
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+});
+
 
 
 // GET all events
