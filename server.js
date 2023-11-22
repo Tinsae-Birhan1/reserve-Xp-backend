@@ -6,7 +6,10 @@ const Boat = require('./models/boatModels')
 const Event = require('./models/eventModels')
 const Flight = require('./models/flightModels')
 const Space = require('./models/spaceModels')
-const app = express()
+const cors = require('cors');
+const app = express();
+
+app.use(cors());
 app.use(express.json())
 app.getMaxListeners('/', (req, res)=>{
     res.send("Hello Node API")
@@ -435,6 +438,8 @@ app.post("/hotel", async(req, res)=>{
         res.status(500).json({message: error.message})
     }
 })
+
+
 mongoose.
 connect("mongodb+srv://tinsaebirhan7:D9EubbEi5lJpDCW1@cluster0.ovqcrvw.mongodb.net/ReserveXP?retryWrites=true&w=majority")
 .then(()=> {
