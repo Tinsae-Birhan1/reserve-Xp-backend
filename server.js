@@ -7,6 +7,10 @@ const Event = require('./models/eventModels')
 const Flight = require('./models/flightModels')
 const Space = require('./models/spaceModels')
 const Tour = require('./models/TourModels');
+const bodyParser = require('body-parser');
+const authRoutes = require('./routes/authRoutes');
+const adminRoutes = require('./routes/adminRoutes');
+
 
 const cors = require('cors');
 const app = express();
@@ -17,6 +21,11 @@ app.getMaxListeners('/', (req, res)=>{
     res.send("Hello Node API")
 
 })
+
+
+
+app.use('/auth', authRoutes);
+app.use('/admin', adminRoutes);
 
 // GET all Flight
 

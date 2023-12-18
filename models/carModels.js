@@ -8,27 +8,25 @@ const carSchema = mongoose.Schema(
         },
         brand: {
             type: String,
-            required: [true, "Please enter the brand"]
         },
         price: {
             type: Number,
-            required: [true, "Please enter the price"]
         },
         color: {
             type: String,
-            required: [true, "Please enter the color"]
         },
-        mileage: {
+    
+        Content: {
+            type: String,
+        },
+        Passenger: {
             type: Number,
-            required: [true, "Please enter the mileage"]
         },
-        fuelType: {
+        GearShift: {
             type: String,
-            required: [true, "Please enter the fuel type"]
         },
-        transmission: {
-            type: String,
-            required: [true, "Please enter the transmission"]
+        Door: {
+            type: Number,
         }
     },
     {
