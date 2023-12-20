@@ -1,13 +1,3 @@
-// const express = require('express');
-// const router = express.Router();
-// const authController = require('../controllers/authController');
-
-// router.post('/registerVendor', authController.registerVendor);
-// router.post('/login', authController.login);
-
-// module.exports = router;
-
-
 
 const express = require('express');
 const router = express.Router();
