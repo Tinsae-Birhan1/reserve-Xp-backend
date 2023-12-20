@@ -58,10 +58,15 @@ export const getHotels = async (req, res, next) => {
 
 export const countByCity = async (req, res, next) => {
   const cities = req.query.cities.split(",");
+  const { min, max, ...others } = req.query;
   try {
     const list = await Promise.all(
       cities.map((city) => {
-        return Hotel.countDocuments({ city: city });
+        return Hotel.countDocuments({
+          city: city,
+          ...others,
+          cheapestPrice: { $gt: min | 1, $lt: max || 999 },
+        });
       })
     );
     res.status(200).json(list);

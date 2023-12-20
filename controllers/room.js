@@ -21,6 +21,17 @@ export const createRoom = async (req, res, next) => {
     }
 }
 
+export const filterRoomsByFeatures = async (req, res, next) => {
+    const { features } = req.body;
+  
+    try {
+      const filteredRooms = await Room.find({ features: { $in: features } });
+      res.status(200).json(filteredRooms);
+    } catch (err) {
+      next(err);
+    }
+}
+
 export const updateRoom = async (req, res, next) => {
     try {
       const updatedRoom = await Room.findByIdAndUpdate(
