@@ -6,10 +6,12 @@ const Boat = require('./models/boatModels')
 const Event = require('./models/eventModels')
 const Flight = require('./models/flightModels')
 const Space = require('./models/spaceModels')
-const Tour = require('./models/TourModels');
+const Tour = require('./models/tourModels');
 const bodyParser = require('body-parser');
-const authRoutes = require('./routes/authRoutes');
-const adminRoutes = require('./routes/adminRoutes');
+const Booking  = require('./models/bookingModels');
+const Room = require('./models/roomModels');
+
+
 
 
 const cors = require('cors');
@@ -22,10 +24,6 @@ app.getMaxListeners('/', (req, res)=>{
 
 })
 
-
-
-app.use('/auth', authRoutes);
-app.use('/admin', adminRoutes);
 
 // GET all Flight
 
@@ -496,3 +494,267 @@ connect("mongodb+srv://tinsaebirhan7:D9EubbEi5lJpDCW1@cluster0.ovqcrvw.mongodb.n
 }).catch((error)=> {
     console.log(error)
 })
+
+// CREATE a new booking for a room
+app.post("/rooms/:id/bookings", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const room = await Room.findById(id);
+
+        if (!room) {
+            return res.status(404).json({ message: "Room not found" });
+        }
+
+        const newBooking = await Booking.create(req.body);
+        room.bookings.push(newBooking);
+        await room.save();
+
+        res.status(200).json(newBooking);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// GET all bookings for a room
+app.get("/rooms/:id/bookings", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const room = await Room.findById(id).populate("bookings");
+
+        if (!room) {
+            return res.status(404).json({ message: "Room not found" });
+        }
+
+        res.status(200).json(room.bookings);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// GET a single booking for a room by ID
+
+app.get("/rooms/:id/bookings/:bookingId", async (req, res) => {
+    try {
+        const { id, bookingId } = req.params;
+        const room = await Room.findById(id).populate("bookings");
+        const booking = room.bookings.find((booking) => booking.id === bookingId);
+
+        if (!booking) {
+            return res.status(404).json({ message: "Booking not found" });
+        }
+
+        res.status(200).json(booking);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+}
+
+);
+
+// UPDATE a booking for a room by ID
+
+
+app.put("/rooms/:id/bookings/:bookingId", async (req, res) => {
+
+    try {
+        const { id, bookingId } = req.params;
+        const room = await Room.findById(id).populate("bookings");
+        const booking = room.bookings.find((booking) => booking.id === bookingId);
+
+        if (!booking) {
+            return res.status(404).json({ message: "Booking not found" });
+        }
+
+        const updatedBooking = await Booking.findByIdAndUpdate(bookingId, req.body, { new: true });
+
+        res.status(200).json(updatedBooking);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+}
+    
+    );
+
+// DELETE a booking for a room by ID
+app.delete("/rooms/:id/bookings/:bookingId", async (req, res) => {
+    try {
+        const { id, bookingId } = req.params;
+        const room = await Room.findById(id).populate("bookings");
+        const booking = room.bookings.find((booking) => booking.id === bookingId);
+
+        if (!booking) {
+            return res.status(404).json({ message: "Booking not found" });
+        }
+
+        await Booking.findByIdAndDelete(bookingId);
+
+        res.status(200).json({ message: "Booking deleted successfully" });
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+}
+    
+    );
+
+// GET all bookings
+app.get("/bookings", async (req, res) => {
+    try {
+        const bookings = await Booking.find({});
+        res.status(200).json(bookings);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// GET a single booking by ID
+app.get("/bookings/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const booking = await Booking.findById(id);
+
+        if (!booking) {
+            return res.status(404).json({ message: "Booking not found" });
+        }
+
+        res.status(200).json(booking);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// CREATE a new booking
+app.post("/bookings", async (req, res) => {
+    try {
+        const newBooking = await Booking.create(req.body);
+        res.status(201).json(newBooking);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// UPDATE a booking by ID
+app.put("/bookings/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const updatedBooking = await Booking.findByIdAndUpdate(id, req.body, { new: true });
+
+        if (!updatedBooking) {
+            return res.status(404).json({ message: "Booking not found" });
+        }
+
+        res.status(200).json(updatedBooking);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+
+// DELETE a booking by ID
+app.delete("/bookings/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const deletedBooking = await Booking.findByIdAndDelete(id);
+
+        if (!deletedBooking) {
+            return res.status(404).json({ message: "Booking not found" });
+        }
+
+        res.status(200).json({ message: "Booking deleted successfully" });
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+
+
+// GET all rooms
+app.get("/rooms", async (req, res) => {
+    try {
+        const rooms = await Room.find({});
+        res.status(200).json(rooms);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// GET a single room by ID
+app.get("/rooms/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const room = await Room.findById(id);
+
+        if (!room) {
+            return res.status(404).json({ message: "Room not found" });
+        }
+
+        res.status(200).json(room);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// CREATE a new room
+app.post("/rooms", async (req, res) => {
+    try {
+        const newRoom = await Room.create(req.body);
+        res.status(201).json(newRoom);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// UPDATE a room by ID
+
+
+    
+app.put("/rooms/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const updatedRoom = await Room.findByIdAndUpdate(id, req.body, { new: true });
+
+        if (!updatedRoom) {
+            return res.status(404).json({ message: "Room not found" });
+        }
+
+        res.status(200).json(updatedRoom);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// DELETE a room by ID
+
+app.delete("/rooms/:id", async (req, res) => {
+
+    try {
+        const { id } = req.params;
+        const deletedRoom = await Room.findByIdAndDelete(id);
+
+        if (!deletedRoom) {
+            return res.status(404).json({ message: "Room not found" });
+        }
+
+        res.status(200).json({ message: "Room deleted successfully" });
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+}
+        
+        );
+
+
