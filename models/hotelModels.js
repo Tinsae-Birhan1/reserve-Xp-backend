@@ -1,19 +1,3 @@
-// const mongoose = require("mongoose")
-
-// const hotelSchema = mongoose.Schema(
-//     {
-//         name:{
-//             type : String,
-//             required : [true, "please enter the Hotel name"]
-//         }
-//     },
-//     {
-//         timestamps : true
-//     }
-// )
-// const hotel = mongoose.model("Hotel",hotelSchema );
-// module.exports = hotel
-
 
 const mongoose = require("mongoose");
 
