@@ -16,7 +16,7 @@ const boatSchema = mongoose.Schema(
             required: [true, "Please enter the price"]
         },
         images: {
-            type: [String], // Assuming an array of image URLs
+            type: [String],
             required: [true, "Please provide at least 6 images"]
         },
         contentText: {
@@ -24,11 +24,11 @@ const boatSchema = mongoose.Schema(
             required: [true, "Please enter content text"]
         },
         checkInTime: {
-            type: String, // You may want to use a Date type if you need to store both date and time
+            type: String,
             required: [true, "Please enter the check-in time"]
         },
         checkOutTime: {
-            type: String, // You may want to use a Date type if you need to store both date and time
+            type: String,
             required: [true, "Please enter the check-out time"]
         },
         boatPolicy: {

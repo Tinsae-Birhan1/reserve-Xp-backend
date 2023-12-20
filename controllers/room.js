@@ -1,5 +1,5 @@
 import Room from "../models/Room.js";
-import Hotel from "../models/Hotel.js";
+import Hotel from "../models/hotelModels.js";
 import { createError } from "../utils/error.js";
 
 export const createRoom = async (req, res, next) => {
@@ -89,7 +89,18 @@ export const getRoom = async (req, res, next) => {
   
 export const getRooms = async (req, res, next) => {
     try {
-      const rooms = await Room.find();
+      const { priceType, status } = req.query;
+      let query = {};
+
+      if (priceType) {
+        query.priceType = priceType;
+      }
+
+      if (status) {
+        query.status = status;
+      }
+
+      const rooms = await Room.find(query);
       res.status(200).json(rooms);
     } catch (err) {
       next(err);

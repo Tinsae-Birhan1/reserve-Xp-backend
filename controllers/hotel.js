@@ -1,4 +1,4 @@
-import Hotel from "../models/Hotel.js";
+import Hotel from "../models/hotelModels.js";
 import Room from '../models/Room.js'
 
 export const createHotel = async (req,res,next) => {
@@ -44,12 +44,22 @@ export const getHotel = async (req, res, next) => {
 }
 
 export const getHotels = async (req, res, next) => {
-  const { min, max, ...others } = req.query;
+  const { min, max, type, star, ...others } = req.query;
+  const filter = {
+    ...others,
+    cheapestPrice: { $gt: min | 1, $lt: max || 999 },
+  };
+
+  if (type) {
+    filter.type = type;
+  }
+
+  if (star) {
+    filter.star = star;
+  }
+
   try {
-    const hotels = await Hotel.find({
-      ...others,
-      cheapestPrice: { $gt: min | 1, $lt: max || 999 },
-    }).limit(req.query.limit);
+    const hotels = await Hotel.find(filter).limit(req.query.limit);
     res.status(200).json(hotels);
   } catch (err) {
     next(err);
