@@ -717,8 +717,6 @@ app.post("/rooms", async (req, res) => {
 });
 
 // UPDATE a room by ID
-
-
     
 app.put("/rooms/:id", async (req, res) => {
     try {
