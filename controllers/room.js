@@ -1,4 +1,4 @@
-import Room from "../models/Room.js";
+import Room from "../models/roomModels.js";
 import Hotel from "../models/hotelModels.js";
 import { createError } from "../utils/error.js";
 
