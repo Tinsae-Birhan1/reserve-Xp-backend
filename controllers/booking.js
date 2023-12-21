@@ -1,46 +1,54 @@
-import { response } from 'express';
 const express = require('express');
-const router = express.Router();
-const Booking = require('../models/bookingModels');
-
-
-// Import necessary modules or dependencies
-const Booking = require('../models/bookingModel');
+const Room = require('../models/roomModels');
+const BookingDatabase = require('../database/DatabaseBooking');
 
 // Define the Booking controller object
 const BookingController = {
     // Method to create a new booking
     createBooking: async (req, res) => {
-        const { roomId, bookingDate } = req.body;
+        try {
+            const body = req.body;
+            const RoomId = body.roomId;
+            const guestName = body.guestName;
+            const checkInDate = body.checkInDate;
+            const checkOutDate = body.checkOutDate;
+            const room = await Room.findById(RoomId);
 
-        console.log('Creating a new booking...');
-        console.log('Room ID:', roomId);
-        console.log('Booking Date:', bookingDate);
+            if (!room) {
+                return res.status(404).json({ message: "Room not found" });
+            }
+            else {
 
-        // Check if the room is already booked on the requested date
-        const existingBooking = await Booking.findOne({ roomId, bookingDate });
+                const hasbeenbooked = await BookingDatabase.getBookingByroomId(RoomId);
 
-        if (existingBooking) {
-            console.log('Room is already booked on this date.');
-            return res.status(400).json({ message: 'Room is already booked on this date.' });
+                if (hasbeenbooked) {
+                    res.status(200).json({ message: "reserved" });
+                }
+                else {
+
+                    const newobj = Object.assign({}, {
+                        RoomId: RoomId,
+                        guestName: guestName,
+                        checkInDate: checkInDate,
+                        checkOutDate: checkOutDate,
+                        room: room
+                    });
+
+                    const response = await BookingDatabase.createBooking(newobj);
+
+                }
+
+                // const newBooking = await Booking.create(req.body);
+                // room.bookings.push(newBooking);
+                // await room.save();
+
+                // res.status(200).json(newBooking);
+
+            }
+        } catch (error) {
+            console.log(error.message);
+            res.status(500).json({ message: error.message });
         }
-
-        // If the room is not booked, create a new booking
-        const newBooking = await Booking.create(req.body);
-
-        console.log('New booking created:', newBooking);
-
-        res.status(201).json(newBooking);
-    },
-
-    // Method to retrieve a specific booking
-    getBooking: (req, res) => {
-        // Add your code here to retrieve a specific booking
-    },
-
-    // Method to update a booking
-    updateBooking: (req, res) => {
-        // Add your code here to update a booking
     }
 };
 
