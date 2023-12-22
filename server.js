@@ -1,9 +1,21 @@
 const express = require('express')
-const { default: mongoose } = require('mongoose')
-
+const mongoose = require('mongoose')
 const Booking = require('./models/bookingModels');
+const bodyParser = require('body-parser');
+const morgan = require("morgan") //import morgan
+const { log } = require("mercedlogger") // import mercedlogger's log function
+const UserRouter = require("./controllers/users") //import User Routes
+const app = express();
+require("dotenv").config() // load .env variables
+app.use(morgan("tiny")) // log the request for debugging
+app.use(express.json()) // parse json bodies
 
+const cors = require('cors');
 
+app.use("/user", UserRouter) // send all "/user" requests to UserRouter for routing
+
+app.use(cors());
+app.use(express.json())
 const flightRoutes = require('./routes/flight');
 const spaceRoutes = require('./routes/space');
 const tourRoutes = require('./routes/tour');
@@ -12,9 +24,6 @@ const boatRoutes = require('./routes/boat');
 const hotelRoutes = require('./routes/hotel');
 const roomRoutes = require('./routes/room');
 
-
-const cors = require('cors');
-const app = express();
 
 app.use(cors());
 app.use(express.json())
@@ -40,17 +49,17 @@ app.listen(4000, () => {
 });
 
 
-mongoose.
-    connect("mongodb+srv://tinsaebirhan7:D9EubbEi5lJpDCW1@cluster0.ovqcrvw.mongodb.net/ReserveXP?retryWrites=true&w=majority")
-    .then(() => {
-        app.getMaxListeners('/blog', (req, res) => {
-            res.send("Hello Node API")
+// mongoose.
+//     connect("mongodb+srv://tinsaebirhan7:D9EubbEi5lJpDCW1@cluster0.ovqcrvw.mongodb.net/ReserveXP?retryWrites=true&w=majority")
+//     .then(() => {
+//         app.getMaxListeners('/blog', (req, res) => {
+//             res.send("Hello Node API")
 
-        })
-        console.log("connected to mongo")
-    }).catch((error) => {
-        console.log(error)
-    })
+//         })
+//         console.log("connected to mongo")
+//     }).catch((error) => {
+//         console.log(error)
+//     })
 
 
 
