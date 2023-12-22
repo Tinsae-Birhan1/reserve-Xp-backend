@@ -3,22 +3,6 @@ const mongoose = require("mongoose");
 
 const TourSchema = mongoose.Schema(
     {
-        title: {
-            type: String,
-            required: [true, "Please enter the title"]
-        },
-        content: {
-            type: String,
-            required: [true, "Please enter the content"]
-        },
-        videoLink: {
-            type: String,
-            required: [true, "Please enter the video link"]
-        },
-        image: {
-            type: String,
-            required: [true, "Please enter the image"]
-        },
         type: String,
         location: {
             type: String,
