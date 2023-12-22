@@ -1,27 +1,79 @@
 const express = require('express');
 const router = express.Router();
+const Car = require('../models/flightModels');
 
-router.get('/', (req, res) => {
-    res.send('Get all cars');
+
+router.get("/cars", async (req, res) => {
+    try {
+        const cars = await Car.find({});
+        res.status(200).json(cars);
+    } catch (error) {
+        console.log("Error in GET /cars:", error.message);
+        res.status(500).json({ message: error.message });
+    }
 });
 
-router.get('/:id', (req, res) => {
-    const carId = req.params.id;
-    res.send(`Get car with ID ${carId}`);
+// GET a single car by ID
+router.get("/cars/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const car = await Car.findById(id);
+
+        if (!car) {
+            return res.status(404).json({ message: "Car not found" });
+        }
+
+        res.status(200).json(car);
+    } catch (error) {
+        console.log("Error in GET /cars/:id:", error.message);
+        res.status(500).json({ message: error.message });
+    }
 });
 
-router.post('/', (req, res) => {
-    res.send('Create a new car');
+// CREATE a new car
+router.post("/cars", async (req, res) => {
+    try {
+        const newCar = await Car.create(req.body);
+        res.status(201).json(newCar);
+    } catch (error) {
+        console.log("Error in POST /cars:", error.message);
+        res.status(500).json({ message: error.message });
+    }
 });
 
-router.put('/:id', (req, res) => {
-    const carId = req.params.id;
-    res.send(`Update car with ID ${carId}`);
+// DELETE a car by ID
+router.delete("/cars/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const deletedCar = await Car.findByIdAndDelete(id);
+
+        if (!deletedCar) {
+            return res.status(404).json({ message: "Car not found" });
+        }
+
+        res.status(200).json({ message: "Car deleted successfully" });
+    } catch (error) {
+        console.log("Error in DELETE /cars/:id:", error.message);
+        res.status(500).json({ message: error.message });
+    }
 });
 
-router.delete('/:id', (req, res) => {
-    const carId = req.params.id;
-    res.send(`Delete car with ID ${carId}`);
+// UPDATE a car by ID
+router.put("/cars/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const updatedCar = await Car.findByIdAndUpdate(id, req.body, { new: true });
+
+        if (!updatedCar) {
+            return res.status(404).json({ message: "Car not found" });
+        }
+
+        res.status(200).json(updatedCar);
+    } catch (error) {
+        console.log("Error in PUT /cars/:id:", error.message);
+        res.status(500).json({ message: error.message });
+    }
 });
 
 module.exports = router;
+
