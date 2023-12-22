@@ -1,5 +1,5 @@
 const express = require('express')
-const { default: mongoose } = require('mongoose')
+const mongoose = require('mongoose')
 const Hotel = require('./models/hotelModels')
 const Car = require('./models/carModels')
 const Boat = require('./models/boatModels')
@@ -12,11 +12,17 @@ const Booking = require('./models/bookingModels');
 const Room = require('./models/roomModels');
 const Roomrouter = require('./routes/rooms');
 
-
-
+const morgan = require("morgan") //import morgan
+const { log } = require("mercedlogger") // import mercedlogger's log function
+const UserRouter = require("./controllers/users") //import User Routes
+const app = express();
+require("dotenv").config() // load .env variables
+app.use(morgan("tiny")) // log the request for debugging
+app.use(express.json()) // parse json bodies
 
 const cors = require('cors');
-const app = express();
+
+app.use("/user", UserRouter) // send all "/user" requests to UserRouter for routing
 
 app.use(cors());
 app.use(express.json())
@@ -484,17 +490,7 @@ app.post("/tour", async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
-mongoose.
-    connect("mongodb+srv://tinsaebirhan7:D9EubbEi5lJpDCW1@cluster0.ovqcrvw.mongodb.net/ReserveXP?retryWrites=true&w=majority")
-    .then(() => {
-        app.getMaxListeners('/blog', (req, res) => {
-            res.send("Hello Node API")
 
-        })
-        console.log("connected to mongo")
-    }).catch((error) => {
-        console.log(error)
-    })
 
 // CREATE a new booking for a room
 app.use("/rooms", Roomrouter);
@@ -569,28 +565,28 @@ app.delete("/bookings/:id", async (req, res) => {
 
 // GET all rooms
 app.get("/rooms", async (req, res) => {
-  try {
-      const rooms = await Room.find({});
-      res.status(200).json(rooms);
-  } catch (error) {
-      console.log(error.message);
-      res.status(500).json({ message: error.message });
-  }
+    try {
+        const rooms = await Room.find({});
+        res.status(200).json(rooms);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
 });
 
 // GET a single room by ID
 app.get("/rooms/:id", async (req, res) => {
-  try {
-      const { id } = req.params;
-      const room = await Room.findById(id);
-      if (!room) {
-          return res.status(404).json({ message: "Room not found" });
-      }
-      res.status(200).json(room);
-  } catch (error) {
-      console.log(error.message);
-      res.status(500).json({ message: error.message });
-  }
+    try {
+        const { id } = req.params;
+        const room = await Room.findById(id);
+        if (!room) {
+            return res.status(404).json({ message: "Room not found" });
+        }
+        res.status(200).json(room);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
 });
 
 // CREATE a new room
@@ -607,33 +603,33 @@ app.post("/rooms", async (req, res) => {
 // UPDATE a room by ID
 
 app.put("/rooms/:id", async (req, res) => {
-  try {
-      const { id } = req.params;
-      const updatedRoom = await Room.findByIdAndUpdate(id, req.body, { new: true });
-      if (!updatedRoom) {
-          return res.status(404).json({ message: "Room not found" });
-      }
-      res.status(200).json(updatedRoom);
-  } catch (error) {
-      console.log(error.message);
-      res.status(500).json({ message: error.message });
-  }
+    try {
+        const { id } = req.params;
+        const updatedRoom = await Room.findByIdAndUpdate(id, req.body, { new: true });
+        if (!updatedRoom) {
+            return res.status(404).json({ message: "Room not found" });
+        }
+        res.status(200).json(updatedRoom);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
 });
 
 // DELETE a room by ID
 
 app.delete("/rooms/:id", async (req, res) => {
-  try {
-      const { id } = req.params;
-      const deletedRoom = await Room.findByIdAndDelete(id);
+    try {
+        const { id } = req.params;
+        const deletedRoom = await Room.findByIdAndDelete(id);
 
-      if (!deletedRoom) {
-          return res.status(404).json({ message: "Room not found" });
-      }
-      res.status(200).json({ message: "Room deleted successfully" });
-  } catch (error) {
-      console.log(error.message);
-      res.status(500).json({ message: error.message });
-  }
+        if (!deletedRoom) {
+            return res.status(404).json({ message: "Room not found" });
+        }
+        res.status(200).json({ message: "Room deleted successfully" });
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
 }
 );
