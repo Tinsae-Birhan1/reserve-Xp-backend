@@ -1,27 +1,20 @@
 const express = require('express');
 const router = express.Router();
+const carController = require('../controllers/carController.js');
 
-router.get('/', (req, res) => {
-    res.send('Get all cars');
-});
+// GET all Cars
+router.get("/cars", carController.getAllCars);
 
-router.get('/:id', (req, res) => {
-    const carId = req.params.id;
-    res.send(`Get car with ID ${carId}`);
-});
+// GET a single car by ID
+router.get("/cars/:id", carController.getCarById);
 
-router.post('/', (req, res) => {
-    res.send('Create a new car');
-});
+// CREATE a new car
+router.post("/cars", carController.createCar);
 
-router.put('/:id', (req, res) => {
-    const carId = req.params.id;
-    res.send(`Update car with ID ${carId}`);
-});
+// UPDATE a car by ID
+router.put("/cars/:id", carController.updateCarById);
 
-router.delete('/:id', (req, res) => {
-    const carId = req.params.id;
-    res.send(`Delete car with ID ${carId}`);
-});
+// DELETE a car by ID
+router.delete("/cars/:id", carController.deleteCarById);
 
 module.exports = router;
