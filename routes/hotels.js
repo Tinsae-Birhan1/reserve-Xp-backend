@@ -1,27 +1,45 @@
-import express from 'express'
-import {createHotel,updateHotel,deleteHotel,getHotel,getHotels,countByCity,countByType,getHotelRooms} from '../controllers/hotel.js'
-import {verifyAdmin} from "../utils/verifyToken.js"
+const express = require('express');
+const router = express.Router();
+const Hotel = require('../models/flightModels'); 
 
 
-const router = express.Router()
+router.get("/hotel", async (req, res) => {
+    console.log("Debugging /hotel GET route");
+    try {
+        const newHotels = await Hotel.find({});
+        res.status(200).json(newHotels);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+});
 
-//CREATE
-router.post("/", verifyAdmin, createHotel);
+router.get("/hotel/:id", async (req, res) => {
+    console.log("Debugging /hotel/:id GET route");
+    try {
+        const { id } = req.params;
 
-//UPDATE
-router.put("/:id", verifyAdmin, updateHotel);
+        // Use the id parameter to find a single hotel by its ID
+        const hotel = await Hotel.findById(id);
 
-//DELETE
-router.delete("/:id", verifyAdmin, deleteHotel);
+        if (!hotel) {
+            return res.status(404).json({ message: "Hotel not found" });
+        }
 
-//GET SPECIFIC HOTEL
-router.get("/find/:id", getHotel);
+        res.status(200).json(hotel);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+});
 
-//GET ALL HOTELS
-router.get("/", getHotels);
-router.get("/countByCity", countByCity);
-router.get("/countByType", countByType);
-router.get("/room/:id", getHotelRooms);
-
-
-export default router
+router.post("/hotel", async (req, res) => {
+    console.log("Debugging /hotel POST route");
+    try {
+        const newHotel = await Hotel.create(req.body);
+        res.status(200).json(newHotel);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+});
