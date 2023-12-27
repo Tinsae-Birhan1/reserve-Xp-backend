@@ -1,0 +1,61 @@
+const express = require('express');
+const Room = require('../models/roomModels');
+const Car = require('../models/carModels'); // Add Car model import
+const BookingDatabase = require('../database/DatabaseBooking');
+const CarBookingDatabase = require('../database/DatabaseCarBooking'); // Add Car Booking database import
+
+// Define the Booking controller object
+const BookingController = {
+    // ... (existing code)
+
+
+
+
+
+
+    // Utility function to update resource availability
+    updateResourceAvailability: async (resourceId, bookingType, isAvailable) => {
+        try {
+            if (bookingType === 'room') {
+                await Room.findByIdAndUpdate(resourceId, { isAvailable });
+            } else if (bookingType === 'car') {
+                await Car.findByIdAndUpdate(resourceId, { isAvailable });
+            }
+        } catch (error) {
+            console.log(error.message);
+            throw error;
+        }
+    },
+
+    // Method to create a new booking
+    createBooking: async (req, res) => {
+        try {
+            // ... (existing code)
+
+            const newBooking = {
+                resourceId: resourceId,
+                bookingType: bookingType,
+                guestName: guestName,
+                checkInDate: checkInDate,
+                checkOutDate: checkOutDate,
+                resource: resource
+            };
+
+            const response = await BookingDatabase.createBooking(newBooking);
+
+            // Update resource availability status
+            await BookingController.updateResourceAvailability(resourceId, bookingType, false);
+
+            res.status(201).json(response);
+        } catch (error) {
+            console.log(error.message);
+            res.status(500).json({ message: error.message });
+        }
+    },
+
+    // ... (existing code)
+};
+
+module.exports = BookingController;
+
+const Booking = require('../models/bookingModels.js');

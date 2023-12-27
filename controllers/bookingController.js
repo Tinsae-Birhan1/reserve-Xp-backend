@@ -9,6 +9,7 @@ const BookingController = {
         try {
             const body = req.body;
             const RoomId = body.roomId;
+            
             const guestName = body.guestName;
             const checkInDate = body.checkInDate;
             const checkOutDate = body.checkOutDate;
@@ -33,6 +34,7 @@ const BookingController = {
                         checkOutDate: checkOutDate,
                         room: room
                     });
+                    
 
                     const response = await BookingDatabase.createBooking(newobj);
                     await Room.findByIdAndUpdate(RoomId, {
@@ -40,12 +42,6 @@ const BookingController = {
                     })
 
                 }
-
-                // const newBooking = await Booking.create(req.body);
-                // room.bookings.push(newBooking);
-                // await room.save();
-
-                // res.status(200).json(newBooking);
 
             }
         } catch (error) {
