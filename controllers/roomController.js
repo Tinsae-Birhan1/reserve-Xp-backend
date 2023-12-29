@@ -1,4 +1,5 @@
 const Room = require('../models/roomModels.js');
+const BookingDatabase = require('../database/DatabaseBooking.js');
 
 // GET all Rooms
 const getAllRooms = async (req, res) => {
@@ -73,12 +74,64 @@ const deleteRoomById = async (req, res) => {
   }
 };
 
+// book a room
+const bookRoom = async (req, res) => {
+  try {
+    const body = req.body;
+    const RoomId = req.params?.roomid;
+    const guestName = body.guestName;
+    const checkInDate = body.checkInDate;
+    const checkOutDate = body.checkOutDate;
+
+    const room = await Room.findById(RoomId);
+    // console.log({ room });
+
+    if (!room) {
+      return res.status(404).json({ message: "Room not found" });
+    }
+    else {
+
+      const hasbeenbooked = await BookingDatabase.getBookingByroomId(RoomId);
+
+      if (hasbeenbooked) {
+        res.status(200).json({ message: "reserved" });
+      }
+      else {
+
+        const newobj = Object.assign({}, {
+          RoomId: RoomId,
+          guestName: guestName,
+          checkInDate: checkInDate,
+          checkOutDate: checkOutDate,
+        });
+
+        const response = await BookingDatabase.createBooking(newobj);
+        if (response) {
+          res.status(200).json({ message: "Booked", response: response });
+        }
+        else {
+          throw new Error("booking failed");
+        }
+
+      }
+
+    }
+
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+
 module.exports = {
   getAllRooms,
   getRoomById,
   createRoom,
   updateRoomById,
   deleteRoomById,
+  bookRoom
 };
 
 

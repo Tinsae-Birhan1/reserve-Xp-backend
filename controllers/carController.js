@@ -1,4 +1,5 @@
 const Car = require('../models/carModels.js');
+const BookingCarDatabase = require('../database/DatabaseCarBooking.js');
 
 // GET all Cars
 const getAllCars = async (req, res) => {
@@ -73,10 +74,60 @@ const deleteCarById = async (req, res) => {
     }
 };
 
+//Book a car
+const bookCar = async (req, res) => {
+    try {
+        const body = req.body;
+        const CarId = req.params?.carid;
+        const guestName = body.guestName;
+        const checkInDate = body.checkInDate;
+        const checkOutDate = body.checkOutDate;
+
+        const car = await Car.findById(CarId);
+        console.log({ car });
+
+        if (!car) {
+            return res.status(404).json({ message: "car not found" });
+        }
+        else {
+
+            const hasbeenbooked = await BookingCarDatabase.getBookingBycarId(CarId);
+
+            if (hasbeenbooked) {
+                res.status(200).json({ message: "reserved" });
+            }
+            else {
+                const newobj = Object.assign({}, {
+                    CarId: car._id,
+                    guestName: guestName,
+                    checkInDate: checkInDate,
+                    checkOutDate: checkOutDate,
+                });
+
+                const response = await BookingCarDatabase.createBooking(newobj);
+                if (response) {
+                    res.status(200).json({ message: "Booked", response: response });
+                }
+                else {
+                    throw new Error("booking failed");
+                }
+
+            }
+
+        }
+
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+
+}
+
 module.exports = {
     getAllCars,
     getCarById,
     createCar,
     updateCarById,
     deleteCarById,
+    bookCar
 };
