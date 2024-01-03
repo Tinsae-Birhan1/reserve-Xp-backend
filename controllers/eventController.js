@@ -1,4 +1,5 @@
 const Event = require('../models/eventModels.js');
+const BookingEventDatabase = require('../database/DatabaseEventBooking.js');
 
 // GET all Events
 const getAllEvents = async (req, res) => {
@@ -73,10 +74,60 @@ const deleteEventById = async (req, res) => {
     }
 };
 
+//Book an event
+const bookEvent = async (req, res) => {
+    try {
+        const body = req.body;
+        const eventId = req.params?.eventid;
+        const guestName = body.guestName;
+        const checkInDate = body.checkInDate;
+        const checkOutDate = body.checkOutDate;
+
+        const event = await Event.findById(eventId);
+        console.log({ event });
+
+        if (!event) {
+            return res.status(404).json({ message: "Event not found" });
+        }
+        else {
+
+            const hasBeenBooked = await BookingEventDatabase.getBookingByEventId(eventId);
+
+            if (hasBeenBooked) {
+                res.status(200).json({ message: "Reserved" });
+            }
+            else {
+                const newBooking = Object.assign({}, {
+                    eventId: event._id,
+                    guestName: guestName,
+                    checkInDate: checkInDate,
+                    checkOutDate: checkOutDate,
+                });
+
+                const response = await BookingEventDatabase.createBooking(newBooking);
+                if (response) {
+                    res.status(200).json({ message: "Booked", response: response });
+                }
+                else {
+                    throw new Error("Booking failed");
+                }
+
+            }
+
+        }
+
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+
+}
+
 module.exports = {
     getAllEvents,
     getEventById,
     createEvent,
     updateEventById,
     deleteEventById,
+    bookEvent
 };

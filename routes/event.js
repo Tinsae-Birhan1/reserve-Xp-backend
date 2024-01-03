@@ -16,4 +16,6 @@ router.put("/events/:id", eventController.updateEventById);
 // DELETE an event by ID
 router.delete("/events/:id", eventController.deleteEventById);
 
+router.post("/events/booking/:eventid", eventController.bookEvent);
+
 module.exports = router;

@@ -17,4 +17,6 @@ router.put("/spaces/:id", spaceController.updateSpaceById);
 // DELETE a space by ID
 router.delete("/spaces/:id", spaceController.deleteSpaceById);
 
+router.post("/spaces/booking/:spaceid",spaceController.bookSpace);
+
 module.exports = router;

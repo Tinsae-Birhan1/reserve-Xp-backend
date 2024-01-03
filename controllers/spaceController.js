@@ -1,6 +1,7 @@
 const Space = require('../models/spaceModels.js');
+const BookingSpaceDatabase = require('../database/DatabaseSpaceBooking.js');
 
-// GET all Space
+// GET all Spaces
 const getAllSpaces = async (req, res) => {
     try {
         const spaces = await Space.find({});
@@ -73,10 +74,60 @@ const deleteSpaceById = async (req, res) => {
     }
 };
 
+//Book a space
+const bookSpace = async (req, res) => {
+    try {
+        const body = req.body;
+        const spaceId = req.params?.spaceid;
+        const guestName = body.guestName;
+        const checkInDate = body.checkInDate;
+        const checkOutDate = body.checkOutDate;
+
+        const space = await Space.findById(spaceId);
+        console.log({ space });
+
+        if (!space) {
+            return res.status(404).json({ message: "Space not found" });
+        }
+        else {
+
+            const hasBeenBooked = await BookingSpaceDatabase.getBookingBySpaceId(spaceId);
+
+            if (hasBeenBooked) {
+                res.status(200).json({ message: "Reserved" });
+            }
+            else {
+                const newBooking = Object.assign({}, {
+                    spaceId: space._id,
+                    guestName: guestName,
+                    checkInDate: checkInDate,
+                    checkOutDate: checkOutDate,
+                });
+
+                const response = await BookingSpaceDatabase.createBooking(newBooking);
+                if (response) {
+                    res.status(200).json({ message: "Booked", response: response });
+                }
+                else {
+                    throw new Error("Booking failed");
+                }
+
+            }
+
+        }
+
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).json({ message: error.message });
+    }
+
+}
+
 module.exports = {
     getAllSpaces,
     getSpaceById,
     createSpace,
     updateSpaceById,
     deleteSpaceById,
+    bookSpace
 };
