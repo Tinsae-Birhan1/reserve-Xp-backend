@@ -37,5 +37,5 @@ const TourSchema = mongoose.Schema(
     }
 );
 
-const Tour = mongoose.model("Tour", TourSchema);
+const Tour = mongoose.model("Tour", TourSchema,"Space");
 module.exports = Tour;
