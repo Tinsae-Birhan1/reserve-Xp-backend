@@ -24,6 +24,6 @@ const spaceSchema = new mongoose.Schema({
   }
 });
 
-const Space = mongoose.model('Space', spaceSchema);
+const Space = mongoose.model('Space', spaceSchema,"Space");
 
 module.exports = Space;
