@@ -6,6 +6,12 @@ const morgan = require("morgan") //import morgan
 const { log } = require("mercedlogger") // import mercedlogger's log function
 const UserRouter = require("./controllers/users") //import User Routes
 const app = express();
+
+require('./database/connection')
+const Tenant = require('./tenant/tenant')
+const {tenantDb , centralDb} = require('./middleware/db')
+const {auth , centralAuth} = require('./middleware/auth')
+
 require("dotenv").config() // load .env variables
 app.use(morgan("tiny")) // log the request for debugging
 app.use(express.json()) // parse json bodies
@@ -27,25 +33,58 @@ const roomRoutes = require('./routes/room');
 
 app.use(cors());
 app.use(express.json())
+app.use(express.urlencoded({ extended: true }));
 app.getMaxListeners('/', (req, res) => {
     res.send("Hello Node API")
 
 })
 
-app.use('/', flightRoutes);
-app.use('/', spaceRoutes);
-app.use('/', tourRoutes);
-app.use('/', carRoutes);
-app.use('/', boatRoutes);
-app.use('/', hotelRoutes);
-app.use("/", roomRoutes);
+app.get("/api/tenant/", centralAuth, async (req, res) => {
+    try {
+      const allTenant = await  Tenant.find({})
+       res
+        .status(201)
+        .send({
+          allTenant: allTenant,
+          message: "Tenant Added Successfully !",
+          success: true
+        });        
+    } catch (error) {
+     return res.status(400).json({ message: error.message,success: false });
+    }
+
+})
+app.post('/api/tenant/', centralAuth, centralDb,async (req, res) => {
+    try {
+      const newTenant = await  Tenant.create(req.body)
+       res
+        .status(201)
+        .send({
+          tenant: newTenant,
+          message: "Tenant Added Successfully !",
+          success: true
+        });
+        
+       await newTenant.save(); 
+    } catch (error) {
+     return res.status(400).json({ message: error.message,success: false });
+    }
+})
+
+app.use('/:slug/',auth,tenantDb,flightRoutes);
+app.use('/:slug/',auth,tenantDb, spaceRoutes);
+app.use('/:slug/',auth,tenantDb, tourRoutes);
+app.use('/:slug/',auth,tenantDb,carRoutes);
+app.use('/:slug/',auth,tenantDb, boatRoutes);
+app.use('/:slug/',auth,tenantDb, hotelRoutes);
+app.use(':slug/',auth,tenantDb,roomRoutes);
 
 
 
 
 // GET all hotels
-app.listen(4000, () => {
-    console.log("Node API app is running on Port 4000");
+app.listen(80, () => {
+    console.log("Node API app is running on Port 80");
 });
 
 
