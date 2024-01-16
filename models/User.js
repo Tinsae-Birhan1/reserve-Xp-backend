@@ -9,11 +9,11 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   idCardFile: { type: String, required: true },
   tradeLicense: { type: String, required: true },
-  role: { type: String, default: 'user' }, // 'user', 'vendor', 'admin'
-  status: { type: String, default: 'pending' }, // 'pending', 'approved', 'rejected'
+  role: { type: String, enum:["user","admin","vendor"], default: 'user' }, // 'user', 'vendor', 'admin'
+  status: { type: String,enum:["pending","approved","rejected"], default: 'pending' }, // 'pending', 'approved', 'rejected'
 });
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model('User', userSchema,"All User");
 
 module.exports = User;
 
