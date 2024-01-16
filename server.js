@@ -77,7 +77,7 @@ app.use('/:slug/',auth,tenantDb, tourRoutes);
 app.use('/:slug/',auth,tenantDb,carRoutes);
 app.use('/:slug/',auth,tenantDb, boatRoutes);
 app.use('/:slug/',auth,tenantDb, hotelRoutes);
-app.use(':slug/',auth,tenantDb,roomRoutes);
+app.use('/:slug/',auth,tenantDb,roomRoutes);
 
 
 
@@ -104,7 +104,7 @@ app.listen(80, () => {
 
 
 // GET all bookings
-app.get("/bookings", async (req, res) => {
+app.get("/:slug/bookings", auth,tenantDb,async (req, res) => {
     try {
         const bookings = await Booking.find({});
         res.status(200).json(bookings);
@@ -115,7 +115,7 @@ app.get("/bookings", async (req, res) => {
 });
 
 // GET a single booking by ID
-app.get("/bookings/:id", async (req, res) => {
+app.get("/:slug/bookings/:id", auth,tenantDb,async (req, res) => {
     try {
         const { id } = req.params;
         const booking = await Booking.findById(id);
@@ -132,7 +132,7 @@ app.get("/bookings/:id", async (req, res) => {
 });
 
 // CREATE a new booking
-app.post("/bookings", async (req, res) => {
+app.post("/:slug/bookings",auth,tenantDb, async (req, res) => {
     try {
         const newBooking = await Booking.create(req.body);
         res.status(201).json(newBooking);
@@ -143,7 +143,7 @@ app.post("/bookings", async (req, res) => {
 });
 
 // UPDATE a booking by ID
-app.put("/bookings/:id", async (req, res) => {
+app.put("/:slug/bookings/:id",auth,tenantDb, async (req, res) => {
     try {
         const { id } = req.params;
         const updatedBooking = await Booking.findByIdAndUpdate(id, req.body, { new: true });
@@ -160,7 +160,7 @@ app.put("/bookings/:id", async (req, res) => {
 });
 
 // DELETE a booking by ID
-app.delete("/bookings/:id", async (req, res) => {
+app.delete("/:slug/bookings/:id", auth,tenantDb, async (req, res) => {
     try {
         const { id } = req.params;
         const deletedBooking = await Booking.findByIdAndDelete(id);
