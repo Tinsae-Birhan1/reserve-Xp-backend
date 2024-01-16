@@ -41,5 +41,5 @@ const boatSchema = mongoose.Schema(
     }
 );
 
-const Boat = mongoose.model("Boat", boatSchema);
+const Boat = mongoose.model("Boat", boatSchema,"Boat");
 module.exports = Boat;
