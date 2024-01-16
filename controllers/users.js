@@ -8,33 +8,91 @@ const router = Router(); // create router to create route bundle
 
 //DESTRUCTURE ENV VARIABLES WITH DEFAULTS
 const { SECRET = "secret" } = process.env;
+const express = require('express');
+const multer = require('multer');
+
+
 
 // Signup route to create a new user
 // controllers/User.js
 
 // controllers/User.js
 
-router.post("/signup", async (req, res) => {
-    try {
-      // hash the password
-      req.body.password = await bcrypt.hash(req.body.password, 10); 
-      // Set the status to 'pending' for vendors
-      const status = req.body.role === 'vendor' ? 'pending' : 'active';
+// router.post("/signup", async (req, res) => {
+//     try {
+//       // hash the password
+//       req.body.password = await bcrypt.hash(req.body.password, 10); 
+//       // Set the status to 'pending' for vendors
+//       const status = req.body.role === 'vendor' ? 'pending' : 'active';
       
-      // create a new user with role and status
-      const user = await User.create({
-        username: req.body.username,
-        password: req.body.password,
-        role: req.body.role,
-        status,
-      });
+//       // create a new user with role and status
+//       const user = await User.create({
+//         username: req.body.username,
+//         password: req.body.password,
+//         role: req.body.role,
+//         status,
+//       });
   
-      // send new user as response
-      res.json(user);
+//       // send new user as response
+//       res.json(user);
+//     } catch (error) {
+//       res.status(400).json({ error });
+//     }
+//   });
+
+// controllers/users.js
+
+
+
+// Set up Multer storage
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/'); // Set the destination folder for uploaded files
+    },
+    filename: function (req, file, cb) {
+        const fileName = Date.now() + '-' + file.originalname;
+        cb(null, fileName);
+    },
+});
+
+const upload = multer({ storage: storage });
+
+// Signup route to create a new user with image uploads
+router.post("/signup", upload.fields([
+    { name: 'IdCard', maxCount: 1 },
+    { name: 'tradeLicense', maxCount: 1 },
+]), async (req, res) => {
+    try {
+        // Hash the password
+        req.body.password = await bcrypt.hash(req.body.password, 10);
+
+        // Set the status to 'pending' for vendors
+        const status = req.body.role === 'vendor' ? 'pending' : 'active';
+
+        // Create a new user with role, status, and additional fields
+        const user = await User.create({
+            username: req.body.username,
+            password: req.body.password,
+            phoneNumber: req.body.phoneNumber,
+            companyName: req.body.companyName,
+            IdCard: req.files['IdCard'] ? req.files['IdCard'][0].path : null, // Store the file path in the database if uploaded
+            tradeLicense: req.files['tradeLicense'] ? req.files['tradeLicense'][0].path : null, // Store the file path in the database if uploaded
+            role: req.body.role,
+            status,
+        });
+
+        // Send new user as a response
+        res.json({
+          user
+      });
+      
     } catch (error) {
-      res.status(400).json({ error });
+        res.status(400).json({ error });
     }
-  });
+});
+
+
+
   
 
   // controllers/User.js
