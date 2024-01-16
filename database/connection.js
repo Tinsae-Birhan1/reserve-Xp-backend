@@ -6,13 +6,12 @@ const {log} = require("mercedlogger") // import merced logger
 const {DATABASE_URL} = process.env 
 
 // CONNECT TO MONGO
-mongoose.connect = mongoose.connect(DATABASE_URL, {useNewUrlParser: true, useUnifiedTopology: true})
+mongoose.connect(DATABASE_URL)
 
 // CONNECTION EVENTS
 mongoose.connection
-.on("open", () => log.green("DATABASE STATE", "Connection Open"))
-.on("close", () => log.magenta("DATABASE STATE", "Connection Open"))
-.on("error", (error) => log.red("DATABASE STATE", error))
+.on("open", () => log.green("Db State", "DB Connection Open"))
+.on("close", () => log.magenta("Db State", "DB Connection Open"))
+.on("error", (error) => log.red("Db State", error))
 
 // EXPORT CONNECTION
-module.exports = mongoose
