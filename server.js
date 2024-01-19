@@ -60,8 +60,8 @@ app.use('/:slug/',auth,tenantDb,roomRoutes);
 
 
 // GET all hotels
-app.listen(80, () => {
-    console.log("Node API app is running on Port 80");
+app.listen(process.env.PORT, () => {
+    console.log(` SAAS API  is running on Port ${process.env.PORT}`);
 });
 
 
