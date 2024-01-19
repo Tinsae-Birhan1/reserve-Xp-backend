@@ -4,7 +4,7 @@ const Booking = require('./models/bookingModels');
 const bodyParser = require('body-parser');
 const morgan = require("morgan") //import morgan
 const { log } = require("mercedlogger") // import mercedlogger's log function
-const UserRouter = require("./controllers/users") //import User Routes
+// const UserRouter = require("./controllers/users") //import User Routes
 const app = express();
 
 require('./database/connection')
@@ -18,7 +18,7 @@ app.use(express.json()) // parse json bodies
 
 const cors = require('cors');
 
-app.use("/user", UserRouter) // send all "/user" requests to UserRouter for routing
+// app.use("/user", UserRouter) // send all "/user" requests to UserRouter for routing
 
 app.use(cors());
 app.use(express.json())
@@ -30,6 +30,10 @@ const boatRoutes = require('./routes/boat');
 const hotelRoutes = require('./routes/hotel');
 const roomRoutes = require('./routes/room');
 
+const superRoutes = require('./routes/superadmin');
+const tenantRoutes = require('./routes/tenantRoutes');
+const vendorRoutes = require('./routes/vendorRoutes');
+const userRoutes = require('./routes/userRoutes')
 
 app.use(cors());
 app.use(express.json())
@@ -39,37 +43,10 @@ app.getMaxListeners('/', (req, res) => {
 
 })
 
-app.get("/api/tenant/", centralAuth, async (req, res) => {
-    try {
-      const allTenant = await  Tenant.find({})
-       res
-        .status(201)
-        .send({
-          allTenant: allTenant,
-          message: "Tenant Added Successfully !",
-          success: true
-        });        
-    } catch (error) {
-     return res.status(400).json({ message: error.message,success: false });
-    }
-
-})
-app.post('/api/tenant/', centralAuth, centralDb,async (req, res) => {
-    try {
-      const newTenant = await  Tenant.create(req.body)
-       res
-        .status(201)
-        .send({
-          tenant: newTenant,
-          message: "Tenant Added Successfully !",
-          success: true
-        });
-        
-       await newTenant.save(); 
-    } catch (error) {
-     return res.status(400).json({ message: error.message,success: false });
-    }
-})
+app.use("/api/tenant/", centralAuth, tenantRoutes);
+app.use("/api/superadmin/", centralDb, superRoutes);
+app.use("/api/:slug/vendor/", auth, tenantDb, vendorRoutes);
+app.use("/api/:slug/user/", auth, tenantDb, userRoutes);
 
 app.use('/:slug/',auth,tenantDb,flightRoutes);
 app.use('/:slug/',auth,tenantDb, spaceRoutes);
