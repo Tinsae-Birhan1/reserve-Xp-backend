@@ -16,8 +16,7 @@ const connectToDatabase = async ( dbName) => {
 
 const tenantDb = async function (req, res, next) {
     const {slug} = req.params
-    console.log('Tenant Database')
-    console.log(" Slug ", slug)
+    console.log('Tenant Database',slug)
     await connectToDatabase(slug);
     next()
 }
