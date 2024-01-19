@@ -10,17 +10,26 @@ const adminSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    fullName: {
+        type: String,
+        required: true
+    },
     email: {
         type: String,
         required: true,
         unique: true
     },
+    role: {
+        type: String,
+        default: "SuperAdmin"
+    },
+
     createdAt: {
         type: Date,
         default: Date.now
     }
 });
 
-const Admin = mongoose.model('Admin', adminSchema,"Admin");
+const Admin = mongoose.model('SuperAdmin', adminSchema,"SuperAdmin");
 
 module.exports = Admin;
