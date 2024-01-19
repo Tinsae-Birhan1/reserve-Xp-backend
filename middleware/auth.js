@@ -14,13 +14,13 @@ const connectToDatabase = async (dbName) => {
     }
 };
 const auth = async (req, res, next) => {
-    // await connectToDatabase(process.env.DB_NAME);
+    await connectToDatabase(process.env.DB_NAME);
     const doesItExist = await Tenant.findOne({ business_name: req.params.slug });
     console.log(" Tenant ", doesItExist);
     if(doesItExist){
-      req.database = doesItExist
-      req.user = req.params.slug
-      // await mongoose.connect( `mongodb+srv://${process.env.MONGODB_ACCOUNT}:${process.env.MONGODB_PASS}${process.env.MONGODB_CLUSTER}/${req.params.slug}?retryWrites=true&w=majority`);
+      req.user = doesItExist
+      req.slug = slug
+      req.tenant = doesItExist
       next()
     }else{
       return res.status(403).json({message:"Tenant does not found~"})
