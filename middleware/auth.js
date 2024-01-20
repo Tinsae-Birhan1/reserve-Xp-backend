@@ -14,8 +14,9 @@ const connectToDatabase = async (dbName) => {
     }
 };
 const auth = async (req, res, next) => {
+    const {slug} = req.params
     await connectToDatabase(process.env.DB_NAME);
-    const doesItExist = await Tenant.findOne({ business_name: req.params.slug });
+    const doesItExist = await Tenant.findOne({ businessName: slug });
     console.log(" Tenant ", doesItExist);
     if(doesItExist){
       req.user = doesItExist

@@ -1,5 +1,5 @@
 const { verify } = require("jsonwebtoken");
-const SuperAdmin = require("../models/superAdmin");
+const SuperAdmin = require("../models/adminModels");
 const Tenant = require("../tenant/tenant");
 
 const validateSuperAdminToken = async(req, res, next) => {
