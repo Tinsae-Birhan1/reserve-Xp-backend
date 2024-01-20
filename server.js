@@ -35,6 +35,9 @@ const tenantRoutes = require('./routes/tenantRoutes');
 const vendorRoutes = require('./routes/vendorRoutes');
 const userRoutes = require('./routes/userRoutes')
 
+
+const locationRoutes = require('./routes/locationRoutes')
+
 app.use(cors());
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
@@ -47,6 +50,7 @@ app.use("/api/tenant/", centralAuth, tenantRoutes);
 app.use("/api/superadmin/", centralDb, superRoutes);
 app.use("/api/:slug/vendor/", auth, tenantDb, vendorRoutes);
 app.use("/api/:slug/user/", auth, tenantDb, userRoutes);
+app.use("/api/:slug/location/", auth, tenantDb, locationRoutes);
 
 app.use('/:slug/',auth,tenantDb,flightRoutes);
 app.use('/:slug/',auth,tenantDb, spaceRoutes);
