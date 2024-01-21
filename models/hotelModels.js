@@ -1,40 +1,81 @@
 
 const mongoose = require("mongoose");
+const Location = require("../models/locationModel")
 
 const hotelSchema = mongoose.Schema(
     {
-        hotelName: {
+        title: {
             type: String,
-            required: [true, "Please enter the hotel name"]
+            required: [true, "Please enter the hotel title"]
         },
-        location: {
+        content: {
             type: String,
-            required: [true, "Please enter the location"]
+            required: [true, "Please enter the content"]
         },
-        price: {
-            type: Number,
-            required: [true, "Please enter the price"]
+        ytLink: {
+            type: String,
+            required: [true, "Please enter the youtube link"]
         },
         images: {
-            type: [String], // Assuming an array of image URLs
-            required: [true, "Please provide at least 6 images"]
+            type: [String], 
+            required: [true, "Please provide at least 2 images"]
         },
-        contentText: {
+        thumbnail: {
             type: String,
-            required: [true, "Please enter content text"]
+            required: [true, "Please enter thumbnail "]
         },
-        checkInTime: {
-            type: String, // You may want to use a Date type if you need to store both date and time
-            required: [true, "Please enter the check-in time"]
+        rating: {
+                type: String,
+                required:[true,"Hotel Policy Rating required"]
         },
-        checkOutTime: {
-            type: String, // You may want to use a Date type if you need to store both date and time
-            required: [true, "Please enter the check-out time"]
+        hotelPolicy: [{
+                title: { type: String, required: [true, "Policy Title is required"] },
+                content:{type: String,required:[true,"Policy Content is required"]}
+
+        }],
+        checkIn: {type: String, required:[true,"Check In time required"]},
+        checkOut: { type: String, required:[true,"Check Out time required"]},
+        minReservation: {type: Number},
+        minStay:{type: Number},
+        price: { type: Number, min: 0, required: [true, "Hotel Price is required"] },
+        extraPrice: [{
+            name: {type:String},
+            price: {type: Number},
+            type: {type: String, enum:["OneTime","PerPerson"]}
+        }],
+        serviceFee: [{
+            name: {type:String},
+            price: {type:Number},
+            type: {type: String, enum:["OneTime","PerPerson"]}
+
+        }],
+        location: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Location',
+            required:[true,"Location is required"]
         },
-        hotelPolicy: {
-            type: String,
-            required: [true, "Please enter the hotel policy"]
-        }
+        realAddress: { type: String, required: true },
+        mapLink: { type: String, required: true },
+        education: [{
+            name: { type: String },
+            content: { type: String },
+            distance: { type: Number }
+
+        }],
+        health: [{
+            name: { type: String },
+            content: { type: String },
+            distance: { type: Number }
+
+        }],
+        transportation: [{
+            name: { type: String },
+            content: { type: String },
+            distance: { type: Number }
+
+        }],
+
+
     },
     {
         timestamps: true
