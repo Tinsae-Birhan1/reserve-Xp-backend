@@ -71,9 +71,9 @@ const createAdmin = async (req, res) => {
 const loginAdmin = async (req, res) => {
     try {
     const { email, password } = req.body;
-    const Admin = await Admin.findOne({ email });
+    const admin = await Admin.findOne({ email });
 
-    if (Admin && (await bcrypt.compare(password, Admin.password))) {
+    if (admin && (await bcrypt.compare(password, admin.password))) {
       const token = sign(
         { Admin_id: Admin._id, email },
         process.env.JWT_SECRET_KEY,
@@ -82,7 +82,7 @@ const loginAdmin = async (req, res) => {
         }
       );
      
-      return res.status(200).send({ message: "Admin Logged in", token,Admin });
+      return res.status(200).send({ message: "Admin Logged in", token,admin });
     }
     res.status(400).send({ message: "Invalid Credentials" ,success:false});
   } catch (error) {

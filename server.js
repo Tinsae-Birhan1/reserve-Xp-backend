@@ -5,7 +5,6 @@ const bodyParser = require('body-parser');
 const morgan = require("morgan") //import morgan
 const { log } = require("mercedlogger") // import mercedlogger's log function
 // const UserRouter = require("./controllers/users") //import User Routes
-const app = express();
 
 require('./database/connection')
 const Tenant = require('./tenant/tenant')
@@ -13,15 +12,20 @@ const {tenantDb , centralDb} = require('./middleware/db')
 const {auth , centralAuth} = require('./middleware/auth')
 
 require("dotenv").config() // load .env variables
-app.use(morgan("tiny")) // log the request for debugging
-app.use(express.json()) // parse json bodies
-
 const cors = require('cors');
-
-// app.use("/user", UserRouter) // send all "/user" requests to UserRouter for routing
+const app = express();
 
 app.use(cors());
-app.use(express.json())
+app.use(morgan("tiny"))
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.getMaxListeners('/', (req, res) => {
+    res.send("SAAS Node API")
+
+})
+
+
 const flightRoutes = require('./routes/flight');
 const spaceRoutes = require('./routes/space');
 const tourRoutes = require('./routes/tour');
@@ -38,13 +42,6 @@ const userRoutes = require('./routes/userRoutes')
 
 const locationRoutes = require('./routes/locationRoutes')
 
-app.use(cors());
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }));
-app.getMaxListeners('/', (req, res) => {
-    res.send("Hello Node API")
-
-})
 
 app.use("/api/tenant/", centralAuth, tenantRoutes);
 app.use("/api/superadmin/", centralDb, superRoutes);
