@@ -112,6 +112,18 @@ exports.uploadIDAndLicenseImages = multer({
   {
     name: 'tradeLicense', maxCount: 1
 }])
-  
+
+exports.uploadHotelImageAndThumbnail = multer({
+  storage: productImageStorage,
+  limits: { fileSize: 1024 * 1024 * 8 },
+  fileFilter: fileFilter
+}).fields([
+  {
+  name: 'thumbnail', maxCount: 1
+  },
+  {
+    name: 'images', maxCount: 12
+}])
+
 exports.cloudUploadTry = multer({ storage: storage }).single("image");
 
