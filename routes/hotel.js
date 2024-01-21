@@ -1,21 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const hotelController = require('../controllers/hotelController.js');
-
+const { uploadHotelImageAndThumbnail } = require("../middleware/fileupload");
 
 // GET all hotels
-router.get("/hotels", hotelController.getAllHotels);
-
-// GET a single hotel by ID
-router.get("/hotels/:id", hotelController.getHotelById);
-
-// CREATE a new hotel
-router.post("/hotels", hotelController.createHotel);
-
-// UPDATE a hotel by ID
-router.put("/hotels/:id", hotelController.updateHotelById);
-
-// DELETE a hotel by ID
-router.delete("/hotels/:id", hotelController.deleteHotelById);
+router.get("/", hotelController.getAllHotels);
+router.get("/:id", hotelController.getHotelById);
+router.post("/",uploadHotelImageAndThumbnail, hotelController.createHotel);
+router.put("/:id", hotelController.updateHotelById);
+router.delete("/:id", hotelController.deleteHotelById);
 
 module.exports = router;
