@@ -14,8 +14,7 @@ const validateSuperAdminToken = async(req, res, next) => {
   } else {
     try {
       const validToken = verify(accessToken, process.env.JWT_SECRET_KEY);
-      const userInfo = await SuperAdmin.findById(validToken.id);
-      console.log(" Super Admin ",userInfo)
+      const userInfo = await SuperAdmin.findById(validToken.user_id);
       if (userInfo) {
         req.user = userInfo ;
         return next();
@@ -40,8 +39,7 @@ const validateAdminToken = async(req, res, next) => {
   } else {
     try {
       const validToken = verify(accessToken, process.env.JWT_SECRET_KEY);
-      const userInfo = await Tenant.findById(validToken.id);
-      console.log("  Tenant Admin ",userInfo)
+      const userInfo = await Tenant.findById(validToken.user_id);
       if (userInfo) {
         req.user = userInfo ;
         return next();

@@ -75,7 +75,7 @@ const loginAdmin = async (req, res) => {
 
     if (admin && (await bcrypt.compare(password, admin.password))) {
       const token = sign(
-        { Admin_id: Admin._id, email },
+        { user_id: admin._id, email },
         process.env.JWT_SECRET_KEY,
         {
           expiresIn: "7d",
