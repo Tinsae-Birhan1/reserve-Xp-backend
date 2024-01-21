@@ -1,12 +1,21 @@
 const Hotel = require('../models/hotelModels.js');
+const uploadToCloud = require("../config/cloudinary");
 
-// GET all Hotels
+
+const uploadMultipleImages = async (files) => {
+  var imageUrlList = []
+  for (let i = 0; i < files.length; i++){
+       const {url}= await uploadToCloud(files[i].filename);
+       imageUrlList.push(url);
+  }
+  return imageUrlList;
+}
+
 const getAllHotels = async (req, res) => {
   try {
-    const hotels = await Hotel.find({});
-    res.status(200).json(hotels);
+    const hotel = await Hotel.find({});
+    res.status(200).json(hotel);
   } catch (error) {
-    console.log(error.message);
     res.status(500).json({ message: error.message });
   }
 };
@@ -16,7 +25,6 @@ const getHotelById = async (req, res) => {
   try {
     const { id } = req.params;
     const hotel = await Hotel.findById(id);
-
     if (!hotel) {
       return res.status(404).json({ message: "Hotel not found" });
     }
@@ -31,15 +39,24 @@ const getHotelById = async (req, res) => {
 // CREATE a new hotel
 const createHotel = async (req, res) => {
   try {
-    const newHotel = await Hotel.create(req.body);
-    res.status(201).json(newHotel);
+    var hotelData = req.body;
+    console.log(" Body ",req.body)
+    const { url } = await uploadToCloud(req.files.thumbnail[0].filename)
+    console.log(" Thumbnail ",url)
+    hotelData.thumbnail = url
+    const urls = await uploadMultipleImages(req.files.images);
+    console.log(" All Images ",urls)
+    hotelData.images = urls
+    const newHotel = await Hotel.create(hotelData);
+    
+    res.status(201).json({ hotel: newHotel, message: "Hotel Created Successfully" });
+
   } catch (error) {
     console.log(error.message);
     res.status(500).json({ message: error.message });
   }
 };
 
-// UPDATE a hotel by ID
 const updateHotelById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -49,14 +66,13 @@ const updateHotelById = async (req, res) => {
       return res.status(404).json({ message: "Hotel not found" });
     }
 
-    res.status(200).json(updatedHotel);
+    res.status(200).json({ hotel: updatedHotel });
   } catch (error) {
     console.log(error.message); // Add this line to log the error message
     res.status(500).json({ message: error.message });
   }
 };
 
-// DELETE a hotel by ID
 const deleteHotelById = async (req, res) => {
   try {
     const { id } = req.params;
