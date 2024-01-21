@@ -48,13 +48,14 @@ app.use("/api/superadmin/", centralDb, superRoutes);
 app.use("/api/:slug/vendor/", auth, tenantDb, vendorRoutes);
 app.use("/api/:slug/user/", auth, tenantDb, userRoutes);
 app.use("/api/:slug/location/", auth, tenantDb, locationRoutes);
+app.use("/api/:slug/hotel/", auth, tenantDb, hotelRoutes);
+
 
 app.use('/:slug/',auth,tenantDb,flightRoutes);
 app.use('/:slug/',auth,tenantDb, spaceRoutes);
 app.use('/:slug/',auth,tenantDb, tourRoutes);
 app.use('/:slug/',auth,tenantDb,carRoutes);
 app.use('/:slug/',auth,tenantDb, boatRoutes);
-app.use('/:slug/',auth,tenantDb, hotelRoutes);
 app.use('/:slug/',auth,tenantDb,roomRoutes);
 
 
